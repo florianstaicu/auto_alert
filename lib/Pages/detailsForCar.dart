@@ -1,5 +1,7 @@
+import 'package:auto_alert/Pages/notificatiosPage.dart';
 import 'package:auto_alert/SQLite/Cars.dart';
 import 'package:auto_alert/SQLite/database_helper.dart';
+import 'package:auto_alert/Services/notification_service.dart';
 import 'package:flutter/material.dart';
 
 class CarDetails extends StatefulWidget {
@@ -12,8 +14,12 @@ class CarDetails extends StatefulWidget {
 }
 
 class _CarDetailsState extends State<CarDetails> {
+  
   List<Widget> additionalFields = [];
   late List<TextEditingController> additionalControllers;
+
+  int notificationCount = 0;
+  bool isDisposed = false;
 
   @override
   void initState() {
@@ -22,15 +28,18 @@ class _CarDetailsState extends State<CarDetails> {
       4,
       (index) => TextEditingController(),
     );
+
     loadAdditionalFields();
+    updateNotificationCount();
   }
 
   @override
   void dispose() {
+    isDisposed = true;
     for (var controller in additionalControllers) {
       controller.dispose();
     }
-    
+
     super.dispose();
   }
 
@@ -160,9 +169,14 @@ class _CarDetailsState extends State<CarDetails> {
   }
 
   void loadAdditionalFields() async {
+
+    if(isDisposed) return;
+
     final fields = await DatabaseHelper().getAdditionalFields(
       widget.car.numberPlate,
     );
+
+    if(isDisposed) return;
 
     if (fields.isNotEmpty) {
       setState(() {
@@ -173,10 +187,13 @@ class _CarDetailsState extends State<CarDetails> {
           'Fire Extinguisher': fields[0]['fireExtinguisher'] ?? '',
         };
 
-        additionalControllers[0].text = additionalData['CASCO']!;
-        additionalControllers[1].text = additionalData['Oil Mileage']!;
-        additionalControllers[2].text = additionalData['Medical Toolkit']!;
-        additionalControllers[3].text = additionalData['Fire Extinguisher']!;
+        if (additionalControllers.length > 0 && !isDisposed) {
+          additionalControllers[0].text = additionalData['CASCO']!;
+          additionalControllers[1].text = additionalData['Oil Mileage']!;
+          additionalControllers[2].text = additionalData['Medical Toolkit']!;
+          additionalControllers[3].text = additionalData['Fire Extinguisher']!;
+        }
+
 
         String othersData = fields[0]['others'] ?? '';
 
@@ -195,33 +212,47 @@ class _CarDetailsState extends State<CarDetails> {
           addFieldWidget('Fire Extinguisher', 3, additionalControllers[3].text);
         }
         if (othersData.isNotEmpty) {
-          if(othersData.contains('##')) {
+          if (othersData.contains('##')) {
             List<String> multipleFields = othersData.split('##');
             for (String field in multipleFields) {
-              if (field.contains('|')){
+              if (field.contains('|')) {
                 List<String> parts = field.split('|');
                 if (parts.length >= 2) {
                   String fieldName = parts[0];
                   String fieldValue = parts[1];
-                  if(fieldValue.isNotEmpty) {
+                  if (fieldValue.isNotEmpty) {
                     addOtherFieldWidget(fieldName, fieldValue);
                   }
                 }
-              } 
+              }
             }
-          } else if(othersData.contains('|')) {
+          } else if (othersData.contains('|')) {
             List<String> parts = othersData.split('|');
             String fieldName = parts[0];
             String fieldValue = parts[1];
             if (fieldValue.isNotEmpty) {
               addOtherFieldWidget(fieldName, fieldValue);
             }
-          } else if(othersData.isNotEmpty) {
+          } else if (othersData.isNotEmpty) {
             addOtherFieldWidget('Others', othersData);
           }
         }
       });
     }
+  }
+
+  void updateNotificationCount() async {
+    if (isDisposed) return;
+
+    final count = await NotificationService().getCarNotificationCount(
+      widget.car.numberPlate,
+    );
+    
+    if (isDisposed) return;
+
+    setState(() {
+      notificationCount = count;
+    });
   }
 
   @override
@@ -246,13 +277,52 @@ class _CarDetailsState extends State<CarDetails> {
 
           SizedBox(width: 10),
 
-          IconButton(
-            icon: Icon(
-              Icons.notifications_none_rounded,
-              color: Colors.black,
-              size: 30,
-            ),
-            onPressed: () {},
+          Stack(
+            children: [
+              IconButton(
+                icon: Badge.count(
+                  count: notificationCount,
+                  child: Icon(
+                    Icons.notifications_outlined,
+                    color: Colors.black,
+                    size: 30,
+                  ),
+                ),
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NotificationsPage(),
+                    ),
+                  );
+                  updateNotificationCount();
+                },
+              ),
+              if (notificationCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: BoxConstraints(minWidth: 18, minHeight: 18),
+                    child: Text(
+                      notificationCount > 9
+                          ? '9+'
+                          : notificationCount.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),

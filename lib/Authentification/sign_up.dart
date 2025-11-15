@@ -133,8 +133,7 @@ class _SignInPageState extends State<SignInPage> {
     String text,
     bool isMet,
     IconData checkedIcon,
-    IconData uncheckedIcon,
-  ) {
+    IconData uncheckedIcon,) {
     return Row(
       children: [
         Icon(

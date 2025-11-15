@@ -1,1 +1,47 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"alertauth-ed306","appId":"1:886969377824:android:583e052e969ad22b8f8845","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"alertauth-ed306","appId":"1:886969377824:ios:06f9e5943b3197558f8845","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"alertauth-ed306","appId":"1:886969377824:ios:06f9e5943b3197558f8845","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"alertauth-ed306","configurations":{"android":"1:886969377824:android:583e052e969ad22b8f8845","ios":"1:886969377824:ios:06f9e5943b3197558f8845","macos":"1:886969377824:ios:06f9e5943b3197558f8845","web":"1:886969377824:web:5a00a6009e5fea618f8845","windows":"1:886969377824:web:3e24c8bb3cd50e1a8f8845"}}}}},"firestore":{"database":"(default)","location":"europe-central2","rules":"firestore.rules","indexes":"firestore.indexes.json"}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "autoalert-34b7f",
+          "appId": "1:132852231325:android:8a104df49a281e85227874",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "autoalert-34b7f",
+          "appId": "1:132852231325:ios:0ad53cf64f0d1aaf227874",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "autoalert-34b7f",
+          "appId": "1:132852231325:ios:0ad53cf64f0d1aaf227874",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "autoalert-34b7f",
+          "configurations": {
+            "android": "1:132852231325:android:8a104df49a281e85227874",
+            "ios": "1:132852231325:ios:0ad53cf64f0d1aaf227874",
+            "macos": "1:132852231325:ios:0ad53cf64f0d1aaf227874",
+            "web": "1:132852231325:web:0551c571716d0c05227874",
+            "windows": "1:132852231325:web:650baa655068e4ab227874"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "eur3",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

@@ -1,8 +1,11 @@
 import 'package:auto_alert/Pages/insertingNewCar.dart';
+import 'package:auto_alert/Pages/notificatiosPage.dart';
 import 'package:auto_alert/Pages/profileAccount.dart';
 import 'package:auto_alert/SQLite/Cars.dart';
 import 'package:auto_alert/SQLite/database_helper.dart';
+import 'package:auto_alert/Services/notification_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,10 +19,22 @@ List<Cars> cars = [];
 Cars? carSelected;
 
 class _HomePageState extends State<HomePage> {
+  int notificationCount = 0;
+  int unreadNotifications = 0;
+
   @override
   void initState() {
     loadCars();
     //  DatabaseHelper().deleteDB();
+    // loadUnreadNotificationCount();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await NotificationService().printPendingNotifications();
+    
+    for (var car in cars) {
+      NotificationService().scheduleCarNotifications(car);
+    }
+  });
 
     super.initState();
   }
@@ -39,11 +54,18 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       cars.add(newCar);
     });
+    await NotificationService().scheduleCarNotifications(newCar);
+
+    updateNotificationCount();
+
     print("Fetched and inserted car with number plate: $numberPlate");
   }
 
   void saveCar(Cars car) async {
     await DatabaseHelper().updateCar(car.id!, car.toMap());
+
+    updateNotificationCount();
+
     print("Updated car: ${car.toMap()}");
   }
 
@@ -52,6 +74,9 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       cars = carList.map((car) => Cars.fromMap(car)).toList();
     });
+
+    updateNotificationCount();
+
     print("Loaded cars: $cars");
   }
 
@@ -99,8 +124,112 @@ class _HomePageState extends State<HomePage> {
     );
     if (updateCar != null) {
       saveCar(updateCar);
-      // loadCars();
+
+      await NotificationService().cancelCarNotifications(updateCar!);
+      await NotificationService().scheduleCarNotifications(updateCar);
+
+      loadCars();
     }
+  }
+
+  void updateNotificationCount() async {
+    int count = 0;
+
+    for (var car in cars) {
+      print("Car: ${car.numberPlate}");
+
+      if (car.insuranceExpiry != null && car.insuranceExpiry!.isNotEmpty) {
+        int daysRemaining = car.insuranceDaysRemaining;
+        print("Insurance: $daysRemaining days remaining");
+        if (daysRemaining <= 30) {
+          count++;
+        }
+      }
+
+      if (car.technicalInspectionExpiry != null &&
+          car.technicalInspectionExpiry!.isNotEmpty) {
+        int daysRemaining = car.technicalInspectionDaysRemaining;
+        print("ITP: $daysRemaining days remaining");
+        if (daysRemaining <= 30) {
+          count++;
+        }
+      }
+
+      if (car.roadTaxExpiry != null && car.roadTaxExpiry!.isNotEmpty) {
+        int daysRemaining = car.roadTaxDaysRemaining;
+        print("Road Tax: $daysRemaining days remaining");
+        if (daysRemaining <= 30) {
+          count++;
+        }
+      }
+
+      if (car.medicalToolkit != null && car.medicalToolkit!.isNotEmpty) {
+        int daysRemaining = car.medicalToolkitDaysRemaining;
+        print("Medical Toolkit: $daysRemaining days remaining");
+        if (daysRemaining <= 30) {
+          count++;
+        }
+      }
+
+      if (car.fireExtinguisher != null && car.fireExtinguisher!.isNotEmpty) {
+        int daysRemaining = car.fireExtinguisherDaysRemaining;
+        print("Fire Extinguisher: $daysRemaining days remaining");
+        if (daysRemaining <= 30) {
+          count++;
+        }
+      }
+
+      if (car.others != null && car.others!.isNotEmpty) {
+        int daysRemaining = car.othersDaysRemaining;
+        print("Others: $daysRemaining days remaining");
+        if (daysRemaining <= 30) {
+          count++;
+        }
+      }
+    }
+
+    print('Notification count updated: $count, unread: $unreadNotifications');
+    
+    await loadUnreadNotificationCount();
+
+    if (count > unreadNotifications) {
+      saveUnreadNotificationCount(count);
+      setState(() {
+        unreadNotifications = count;
+      });
+    }
+
+    if (unreadNotifications > count) {
+       saveUnreadNotificationCount(count);
+      setState(() {
+        unreadNotifications = count;
+      });
+    }
+
+
+    setState(() {
+      notificationCount = count;
+    });
+  }
+
+  Future<void> loadUnreadNotificationCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      unreadNotifications =
+          prefs.getInt('unread_notifications') ?? notificationCount;
+    });
+  }
+
+  void saveUnreadNotificationCount(int count) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('unread_notifications', count);
+  }
+
+  void markNotificationAsRead() async {
+    setState(() {
+      unreadNotifications = 0;
+    });
+    saveUnreadNotificationCount(0);
   }
 
   @override
@@ -117,25 +246,69 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         centerTitle: true,
+
         actions: [
+          
           IconButton(
             icon: Icon(Icons.car_crash_outlined, color: Colors.black, size: 30),
             onPressed: () async {
-              await DatabaseHelper().deleteValues(
-                carSelected?.numberPlate ?? '',
-              );
+              // await DatabaseHelper().deleteValues(
+              //   carSelected?.numberPlate ?? '',
+              // );
             },
           ),
 
           SizedBox(width: 10),
 
-          IconButton(
-            icon: Icon(
-              Icons.notifications_none_rounded,
-              color: Colors.black,
-              size: 30,
-            ),
-            onPressed: () {},
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.notifications_none,
+                  color: Colors.black,
+                  size: 30,
+                ),
+                onPressed: () async {
+                  markNotificationAsRead();
+
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NotificationsPage(),
+                    ),
+                  ).then((_) {
+                    updateNotificationCount();
+                  });
+
+                  
+                },
+              ),
+
+              if (unreadNotifications > 0)
+                Positioned(
+                  right: 3,
+                  top: 3,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.red[600],
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: BoxConstraints(minWidth: 20, minHeight: 18),
+                    child: Text(
+                      unreadNotifications > 9
+                          ? unreadNotifications.toString()
+                          : '9+',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
         leading: IconButton(

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:auto_alert/Authentification/login.dart';
+import 'package:auto_alert/Pages/changePassword.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -199,10 +201,72 @@ class _ProfilePageState extends State<ProfilePage> {
           TextButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
-              if (!mounted) return;
-              Navigator.popUntil(context, (route) => route.isFirst);
+              if (mounted) Navigator.pop(context);
+
+              if (mounted) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  (route) => false,
+                );
+              }
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Logged out successfully!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
             },
             child: Text("Logout"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void deleteAccount() async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Account'),
+        content: Text(
+          'Are you sure you want to delete your account? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) =>
+                      Center(child: CircularProgressIndicator()),
+                );
+                await currentUser?.delete();
+
+                if (mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    (route) => false,
+                  );
+                }
+              } catch (e) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error deleting account: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            child: Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -345,11 +409,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                   SizedBox(height: 5),
-                  if (email.isNotEmpty)
-                    Text(
-                      email,
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                    ),
+                  // if (email.isNotEmpty)
+                  //   Text(
+                  //     email,
+                  //     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  //   ),
                 ],
               ),
             ),
@@ -425,14 +489,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     leading: Icon(Icons.lock, color: Colors.blue),
                     title: Text('Change Password'),
                     trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangePassword(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
             SizedBox(height: 30),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 15),
+              margin: EdgeInsets.symmetric(horizontal: 50),
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {

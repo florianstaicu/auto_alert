@@ -41,51 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAwQfzWtRDC6sZv7ucNPjZp_Q1M9bs4Zvc',
-    appId: '1:886969377824:web:5a00a6009e5fea618f8845',
-    messagingSenderId: '886969377824',
-    projectId: 'alertauth-ed306',
-    authDomain: 'alertauth-ed306.firebaseapp.com',
-    storageBucket: 'alertauth-ed306.firebasestorage.app',
+    apiKey: 'AIzaSyANPla3lBm4KUOHOv6MMhcuuwyCCb2BngU',
+    appId: '1:132852231325:web:0551c571716d0c05227874',
+    messagingSenderId: '132852231325',
+    projectId: 'autoalert-34b7f',
+    authDomain: 'autoalert-34b7f.firebaseapp.com',
+    storageBucket: 'autoalert-34b7f.firebasestorage.app',
+    measurementId: 'G-P235E6K68H',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA2TQG4yWz6focoNx4nJEDXDTeBQU5S7xg',
-    appId: '1:886969377824:android:583e052e969ad22b8f8845',
-    messagingSenderId: '886969377824',
-    projectId: 'alertauth-ed306',
-    storageBucket: 'alertauth-ed306.firebasestorage.app',
+    apiKey: 'AIzaSyBDLPVV09A7-ZQJQzkounRVcO5NwfPuHCE',
+    appId: '1:132852231325:android:8a104df49a281e85227874',
+    messagingSenderId: '132852231325',
+    projectId: 'autoalert-34b7f',
+    storageBucket: 'autoalert-34b7f.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCIMsTlTU0ROSNj8gLZh81in1MPx4wHJZk',
-    appId: '1:886969377824:ios:06f9e5943b3197558f8845',
-    messagingSenderId: '886969377824',
-    projectId: 'alertauth-ed306',
-    storageBucket: 'alertauth-ed306.firebasestorage.app',
-    androidClientId: '886969377824-3t80j2i8sb1fn0uftk5hvsv4am5eire0.apps.googleusercontent.com',
-    iosClientId: '886969377824-u3nlpkh5v13pir286p8o9mfp9ac1os2v.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAy89LtTBxMMvBl3vNaCYBro6fFZyrBzrU',
+    appId: '1:132852231325:ios:0ad53cf64f0d1aaf227874',
+    messagingSenderId: '132852231325',
+    projectId: 'autoalert-34b7f',
+    storageBucket: 'autoalert-34b7f.firebasestorage.app',
     iosBundleId: 'com.example.autoAlert',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCIMsTlTU0ROSNj8gLZh81in1MPx4wHJZk',
-    appId: '1:886969377824:ios:06f9e5943b3197558f8845',
-    messagingSenderId: '886969377824',
-    projectId: 'alertauth-ed306',
-    storageBucket: 'alertauth-ed306.firebasestorage.app',
-    androidClientId: '886969377824-3t80j2i8sb1fn0uftk5hvsv4am5eire0.apps.googleusercontent.com',
-    iosClientId: '886969377824-u3nlpkh5v13pir286p8o9mfp9ac1os2v.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAy89LtTBxMMvBl3vNaCYBro6fFZyrBzrU',
+    appId: '1:132852231325:ios:0ad53cf64f0d1aaf227874',
+    messagingSenderId: '132852231325',
+    projectId: 'autoalert-34b7f',
+    storageBucket: 'autoalert-34b7f.firebasestorage.app',
     iosBundleId: 'com.example.autoAlert',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAwQfzWtRDC6sZv7ucNPjZp_Q1M9bs4Zvc',
-    appId: '1:886969377824:web:3e24c8bb3cd50e1a8f8845',
-    messagingSenderId: '886969377824',
-    projectId: 'alertauth-ed306',
-    authDomain: 'alertauth-ed306.firebaseapp.com',
-    storageBucket: 'alertauth-ed306.firebasestorage.app',
+    apiKey: 'AIzaSyANPla3lBm4KUOHOv6MMhcuuwyCCb2BngU',
+    appId: '1:132852231325:web:650baa655068e4ab227874',
+    messagingSenderId: '132852231325',
+    projectId: 'autoalert-34b7f',
+    authDomain: 'autoalert-34b7f.firebaseapp.com',
+    storageBucket: 'autoalert-34b7f.firebasestorage.app',
+    measurementId: 'G-PT37X9G9CW',
   );
 
 }

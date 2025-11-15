@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "alertauth-ed306"
-  }
+    "default": "alertauth-ed306",
+    "develop": "autoalert-34b7f",
+    "staging": "alertauth-ed306"
+  },
+  "targets": {},
+  "etags": {}
 }
